@@ -2,6 +2,7 @@
 
 ![Text to Emoji](https://example.com/text-to-emoji-banner.png)
 
+![Demo](demo.gif)
 
 
 <video src="video.mp4" controls></video>
