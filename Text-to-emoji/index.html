@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Text to Emoji Converter</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #141e30, #243b55);
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #f9fafb;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background: rgba(10, 10, 30, 0.8);
+            backdrop-filter: blur(25px);
+            padding: 50px;
+            border-radius: 30px;
+            width: 90%;
+            max-width: 750px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.7);
+        }
+
+        h1 {
+            font-size: 36px;
+            text-align: center;
+            margin-bottom: 25px;
+            background: linear-gradient(90deg, #00c6ff, #0072ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        textarea {
+            width: 100%;
+            height: 130px;
+            border: none;
+            border-radius: 14px;
+            padding: 18px;
+            resize: none;
+            font-size: 17px;
+            color: #111827;
+            outline: none;
+        }
+
+        .output-container {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            min-height: 120px;
+            font-size: 20px;
+            line-height: 2;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: flex-start;
+        }
+
+        .emoji-bubble {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 12px 18px;
+            border-radius: 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: default;
+            font-size: 28px;
+        }
+
+        .emoji-bubble:hover {
+            transform: scale(1.15);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        button.copy-btn, button.clear-btn {
+            background: linear-gradient(135deg, #3b82f6, #9333ea);
+            border: none;
+            color: white;
+            padding: 16px 20px;
+            border-radius: 14px;
+            font-size: 17px;
+            margin-top: 25px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: block;
+            width: 100%;
+        }
+
+        button.copy-btn:hover, button.clear-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 22px rgba(59, 130, 246, 0.5);
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 14px;
+            opacity: 0.6;
+        }
+
+        @media (max-width: 500px) {
+            h1 {
+                font-size: 28px;
+            }
+
+            button.copy-btn, button.clear-btn {
+                font-size: 15px;
+            }
+
+            .container {
+                padding: 25px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Text to Emoji Converter</h1>
+        <textarea id="inputText" placeholder="Type something... Happy, pizza, party..."></textarea>
+        <div class="output-container" id="outputArea"></div>
+        <button class="copy-btn" onclick="copyToClipboard()">Copy Emojis to Clipboard</button>
+        <button class="clear-btn" onclick="clearOutput()">Clear Output</button>
+        
+    </div>
+
+    <script>
+        const emojiMap = {
+            'happy': '😄',
+            'sad': '😢',
+            'love': '❤️',
+            'heart': '❤️',
+            'angry': '😠',
+            'party': '🎉',
+            'music': '🎵',
+            'pizza': '🍕',
+            'coffee': '☕',
+            'cake': '🎂',
+            'birthday': '🎂',
+            'fire': '🔥',
+            'cool': '😎',
+            'dog': '🐶',
+            'cat': '🐱',
+            'laugh': '😂',
+            'star': '⭐',
+            'moon': '🌙',
+            'sun': '☀️',
+            'rain': '🌧️',
+            'thunder': '⚡',
+            'money': '💰',
+            'car': '🚗',
+            'plane': '✈️',
+            'travel': '✈️',
+            'game': '🎮',
+            'smile': '😊',
+            'hug': '🤗',
+            'flower': '🌸',
+            'book': '📖',
+            'phone': '📱',
+            'camera': '📸',
+            'sleep': '😴',
+            'cry': '😭',
+            'shock': '😲',
+            'kiss': '😘',
+            'clap': '👏',
+            'cheers': '🥂',
+            'ice cream': '🍦',
+            'burger': '🍔',
+            'water': '💧',
+            'ball': '⚽',
+            'football': '🏈',
+            'basketball': '🏀',
+            'bike': '🚲',
+            'run': '🏃‍♂️',
+            'dance': '💃',
+            'happy birthday': '🎉🎂',
+            'good night': '🌙✨',
+            'good morning': '🌞☕'
+        };
+
+        const inputText = document.getElementById('inputText');
+        const outputArea = document.getElementById('outputArea');
+
+        inputText.addEventListener('input', () => {
+            let text = inputText.value;
+            outputArea.innerHTML = '';
+
+            Object.entries(emojiMap).forEach(([keyword, emoji]) => {
+                if (text.toLowerCase().includes(keyword)) {
+                    const bubble = document.createElement('div');
+                    bubble.className = 'emoji-bubble';
+                    bubble.innerText = emoji;
+                    outputArea.appendChild(bubble);
+                }
+            });
+        });
+
+        function copyToClipboard() {
+            let emojis = '';
+            document.querySelectorAll('.emoji-bubble').forEach(bubble => {
+                emojis += bubble.innerText + ' ';
+            });
+            const tempTextArea = document.createElement('textarea');
+            tempTextArea.value = emojis.trim();
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempTextArea);
+            alert('Emojis copied to clipboard!');
+        }
+
+        function clearOutput() {
+            outputArea.innerHTML = '';
+        }
+    </script>
+</body>
+
+</html>
