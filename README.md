@@ -2,6 +2,10 @@
 
 ![Text to Emoji](https://example.com/text-to-emoji-banner.png)
 
+
+
+<video src="video.mp4" controls></video>
+
 ## Description
 This project is a fun and simple tool that converts plain text to emojis. It's implemented using JavaScript and provides an easy-to-use interface for transforming your text into expressive emojis.
 
