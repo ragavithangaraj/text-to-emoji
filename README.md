@@ -16,5 +16,6 @@ This project is a fun and simple tool that converts plain text to emojis. It's i
     ```sh
     cd text-to-emoji
     ```
+just click the file to run the project
 
 
